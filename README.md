@@ -7,6 +7,9 @@
 # サーバー起動
 go run ./server.go
 ```
+- サーバー起動後、`localhost:8080` で左画面にクエリを入力して実行するとレスポンス確認可
 
 ## メモ
-- `gqlgen` によってコードを生成する
+- [gqlgen](https://github.com/99designs/gqlgen) によってコードを生成する
+- 取得(`query`)、追加・更新・削除(`mutation`)
+- `gqlgen.yml` と `schema.graphqls` を用意して `gqlgen generate` によりリゾルバやモデルのコードを生成する
