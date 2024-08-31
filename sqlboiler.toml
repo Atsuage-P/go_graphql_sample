@@ -1,0 +1,13 @@
+pkgname="db"
+output="graph/db"
+wipe=true
+add-global-variants=false
+no-tests=true
+
+[mysql]
+  dbname  = "test"
+  host    = "db"
+  port    = 3306
+  user    = "test"
+  pass    = "test"
+  sslmode = "false"

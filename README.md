@@ -4,6 +4,9 @@
 
 ## 動作確認
 ```sh
+docker compose up -d
+docker compose exec app bash
+
 # サーバー起動
 go run ./server.go
 ```
@@ -13,3 +16,8 @@ go run ./server.go
 - [gqlgen](https://github.com/99designs/gqlgen) によってコードを生成する
 - 取得(`query`)、追加・更新・削除(`mutation`)
 - `gqlgen.yml` と `schema.graphqls` を用意して `gqlgen generate` によりリゾルバやモデルのコードを生成する
+- `sqlboiler` 使ってコード自動生成
+```sh
+# sqlboiler.tomlを作成して以下を実行
+sqlboiler mysql
+```
