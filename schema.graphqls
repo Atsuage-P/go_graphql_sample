@@ -1,5 +1,3 @@
-directive @isAuthenticated on FIELD_DEFINITION
-
 scalar DateTime
 
 scalar URI
@@ -164,7 +162,7 @@ type Query {
 
   user(
     name: String!
-  ): User @isAuthenticated
+  ): User
 
   node(
     id: ID!

@@ -16,6 +16,7 @@ go run ./server.go
 - [gqlgen](https://github.com/99designs/gqlgen) によってコードを生成する
 - 取得(`query`)、追加・更新・削除(`mutation`)
 - `gqlgen.yml` と `schema.graphqls` を用意して `gqlgen generate` によりリゾルバやモデルのコードを生成する
+  - リゾルバとはデータ操作を行うもののことで、実態は特定のフィールドのデータを返す関数のこと
 - `sqlboiler` 使ってコード自動生成
 ```sh
 # sqlboiler.tomlを作成して以下を実行

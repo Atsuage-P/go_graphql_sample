@@ -4,7 +4,10 @@ go 1.22.5
 
 require (
 	github.com/99designs/gqlgen v0.17.49
+	github.com/caarlos0/env/v11 v11.2.2
 	github.com/friendsofgo/errors v0.9.2
+	github.com/go-sql-driver/mysql v1.8.1
+	github.com/joho/godotenv v1.5.1
 	github.com/vektah/gqlparser/v2 v2.5.16
 	github.com/volatiletech/null/v8 v8.1.2
 	github.com/volatiletech/sqlboiler/v4 v4.16.2
@@ -12,6 +15,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/google/uuid v1.6.0 // indirect
