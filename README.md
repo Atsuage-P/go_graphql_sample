@@ -22,3 +22,4 @@ go run ./server.go
 # sqlboiler.tomlを作成して以下を実行
 sqlboiler mysql
 ```
+- ページネーションの[before,after,first,last部分について](https://tekrog.com/graphql-relay-cursor)

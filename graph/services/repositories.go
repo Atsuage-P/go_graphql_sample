@@ -15,9 +15,9 @@ type repoService struct {
 
 func convertRepository(repo *db.Repository) *model.Repository {
 	return &model.Repository{
-		ID: repo.ID,
-		Name: repo.Name,
-		Owner: &model.User{ID: repo.Owner},
+		ID:        repo.ID,
+		Name:      repo.Name,
+		Owner:     &model.User{ID: repo.Owner},
 		CreatedAt: repo.CreatedAt,
 	}
 }

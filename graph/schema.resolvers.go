@@ -38,7 +38,7 @@ func (r *projectV2Resolver) Items(ctx context.Context, obj *model.ProjectV2, aft
 
 // Owner is the resolver for the owner field.
 func (r *projectV2Resolver) Owner(ctx context.Context, obj *model.ProjectV2) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: Owner - owner"))
+	return r.Srv.GetUserByID(ctx, obj.Owner.ID)
 }
 
 // Content is the resolver for the content field.
@@ -48,7 +48,7 @@ func (r *projectV2ItemResolver) Content(ctx context.Context, obj *model.ProjectV
 
 // Repository is the resolver for the repository field.
 func (r *pullRequestResolver) Repository(ctx context.Context, obj *model.PullRequest) (*model.Repository, error) {
-	panic(fmt.Errorf("not implemented: Repository - repository"))
+	return r.Srv.GetRepoByID(ctx, obj.Repository.ID)
 }
 
 // ProjectItems is the resolver for the projectItems field.
@@ -58,7 +58,11 @@ func (r *pullRequestResolver) ProjectItems(ctx context.Context, obj *model.PullR
 
 // Repository is the resolver for the repository field.
 func (r *queryResolver) Repository(ctx context.Context, name string, owner string) (*model.Repository, error) {
-	return r.Srv.GetRepoByFullName(ctx, owner, name)
+	user, err := r.Srv.GetUserByName(ctx, owner)
+	if err != nil {
+		return nil, err
+	}
+	return r.Srv.GetRepoByFullName(ctx, user.ID, name)
 }
 
 // User is the resolver for the user field.
@@ -73,17 +77,17 @@ func (r *queryResolver) Node(ctx context.Context, id string) (model.Node, error)
 
 // Owner is the resolver for the owner field.
 func (r *repositoryResolver) Owner(ctx context.Context, obj *model.Repository) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: Owner - owner"))
+	return r.Srv.GetUserByID(ctx, obj.Owner.ID)
 }
 
 // Issue is the resolver for the issue field.
 func (r *repositoryResolver) Issue(ctx context.Context, obj *model.Repository, number int) (*model.Issue, error) {
-	panic(fmt.Errorf("not implemented: Issue - issue"))
+	return r.Srv.GetIssueByRepoAndNumber(ctx, obj.ID, number)
 }
 
 // Issues is the resolver for the issues field.
 func (r *repositoryResolver) Issues(ctx context.Context, obj *model.Repository, after *string, before *string, first *int, last *int) (*model.IssueConnection, error) {
-	panic(fmt.Errorf("not implemented: Issues - issues"))
+	return r.Srv.ListIssueInRepository(ctx, obj.ID, after, before, first, last)
 }
 
 // PullRequest is the resolver for the pullRequest field.
