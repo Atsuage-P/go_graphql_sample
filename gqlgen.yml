@@ -91,3 +91,45 @@ models:
   URI:
     model:
       - "mygql/graph/model.URI"
+  User:
+    fields:
+      projectV2:
+        resolver: true
+      projectV2s:
+        resolver: true
+  Repository:
+    fields:
+      owner:
+        resolver: true
+      issue:
+        resolver: true
+      issues:
+        resolver: true
+      pullRequest:
+        resolver: true
+      pullRequests:
+        resolver: true
+  Issue:
+    fields:
+      repository:
+        resolver: true
+      projectItems:
+        resolver: true
+      author:
+        resolver: true
+  ProjectV2:
+    fields:
+      items:
+        resolver: true
+      owner:
+        resolver: true
+  PullRequest:
+    fields:
+      repository:
+        resolver: true
+      projectItems:
+        resolver: true
+  ProjectV2Item:
+    fields:
+      content:
+        resolver: true
