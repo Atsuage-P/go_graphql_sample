@@ -9,12 +9,18 @@ import (
 
 type Services interface {
 	UserService
+	RepoService
 }
 
 type UserService interface {
 	GetUserByID(ctx context.Context, id string) (*model.User, error)
 	GetUserByName(ctx context.Context, name string) (*model.User, error)
 	ListUsersByID(ctx context.Context, IDs []string) ([]*model.User, error)
+}
+
+type RepoService interface {
+	GetRepoByID(ctx context.Context, id string) (*model.Repository, error)
+	GetRepoByFullName(ctx context.Context, owner, name string) (*model.Repository, error)
 }
 
 // type IssueService interface {
@@ -25,12 +31,14 @@ type UserService interface {
 
 type services struct {
 	*userService
+	*repoService
 	// *issueService
 }
 
 func New(exec boil.ContextExecutor) Services {
 	return &services{
 		userService: &userService{exec: exec},
+		repoService: &repoService{exec: exec},
 		// issueService: &issueService{exec: exec},
 	}
 }
