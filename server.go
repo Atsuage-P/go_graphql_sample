@@ -14,6 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-sql-driver/mysql"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 const defaultPort = "8080"
@@ -23,6 +24,7 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+	boil.DebugMode = true
 
 	cnf := env.LoadEnv()
 	db := ConnectDB(&cnf.DB)
@@ -30,7 +32,8 @@ func main() {
 
 	srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{
 		Resolvers: &graph.Resolver{
-			Srv: service,
+			Srv:     service,
+			Loaders: graph.NewLoaders(service),
 		},
 	}))
 
