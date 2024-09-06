@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"database/sql"
 	"log"
 	"mygql/env"
@@ -11,6 +13,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -36,9 +39,43 @@ func main() {
 			Srv:     service,
 			Loaders: graph.NewLoaders(service),
 		},
+		// クエリ複雑度の個別制限
 		Complexity: graph.ComplexityConfig(),
 	}))
+	// クエリ複雑度の一括制限
 	srv.Use(extension.FixedComplexityLimit(10))
+	// リクエストを受け取った時に呼ばれるミドルウェア
+	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+		log.Println("before OperationHandler")
+		res := next(ctx)
+		defer log.Println("after OperationHandler")
+		return res
+	})
+	// レスポンスを作成する段階で呼ばれるミドルウェア
+	srv.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+		log.Println("before ResponseHandler")
+		res := next(ctx)
+		defer log.Println("after ResponseHandler")
+		return res
+	})
+	// ルートリゾルバの実行前後用のミドルウェア
+	srv.AroundRootFields(func(ctx context.Context, next graphql.RootResolver) graphql.Marshaler {
+		log.Println("before RootResolver")
+		res := next(ctx)
+		defer func() {
+			var b bytes.Buffer
+			res.MarshalGQL(&b)
+			log.Println("after RootResolver", b.String())
+		}()
+		return res
+	})
+	// レスポンスに含めるjsonフィールドを1つ作る処理の前後用のミドルウェア
+	srv.AroundFields(func(ctx context.Context, next graphql.Resolver) (res any, err error) {
+		log.Println("before Resolver")
+		res, err = next(ctx)
+		defer log.Println("after Resolver", res)
+		return
+	})
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
