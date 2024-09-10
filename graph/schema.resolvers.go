@@ -122,12 +122,12 @@ func (r *repositoryResolver) Issues(ctx context.Context, obj *model.Repository, 
 
 // PullRequest is the resolver for the pullRequest field.
 func (r *repositoryResolver) PullRequest(ctx context.Context, obj *model.Repository, number int) (*model.PullRequest, error) {
-	return nil, nil
+	return r.Srv.GetPullRequestByRepoAndNumber(ctx, obj.ID, number)
 }
 
 // PullRequests is the resolver for the pullRequests field.
 func (r *repositoryResolver) PullRequests(ctx context.Context, obj *model.Repository, after *string, before *string, first *int, last *int) (*model.PullRequestConnection, error) {
-	return nil, nil
+	return r.Srv.ListPullRequestInRepository(ctx, obj.ID, after, before, first, last)
 }
 
 // ProjectV2 is the resolver for the projectV2 field.
