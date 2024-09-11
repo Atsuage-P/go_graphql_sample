@@ -12,6 +12,7 @@ type Services interface {
 	RepoService
 	IssueService
 	PullRequestService
+	ProjectService
 }
 
 type UserService interface {
@@ -37,11 +38,27 @@ type PullRequestService interface {
 	ListPullRequestInRepository(ctx context.Context, repoID string, after *string, before *string, first *int, last *int) (*model.PullRequestConnection, error)
 }
 
+type ProjectService interface {
+	GetProjectByID(ctx context.Context, id string) (*model.ProjectV2, error)
+	GetProjectByOwnerAndNumber(ctx context.Context, ownerID string, number int) (*model.ProjectV2, error)
+	ListProjectByOwner(ctx context.Context, ownerID string, after *string, before *string, first *int, last *int) (*model.ProjectV2Connection, error)
+}
+
+type ProjectItemService interface {
+	GetProjectItemByID(ctx context.Context, id string) (*model.ProjectV2Item, error)
+	ListProjectItemOwnedByProject(ctx context.Context, projectID string, after *string, before *string, first *int, last *int) (*model.ProjectV2ItemConnection, error)
+	ListProjectItemOwnedByIssue(ctx context.Context, issueID string, after *string, before *string, first *int, last *int) (*model.ProjectV2ItemConnection, error)
+	ListProjectItemOwnedByPullRequest(ctx context.Context, pullRequestID string, after *string, before *string, first *int, last *int) (*model.ProjectV2ItemConnection, error)
+	AddIssueInProjectV2(ctx context.Context, projectID, issueID string) (*model.ProjectV2Item, error)
+	AddPullRequestInProjectV2(ctx context.Context, projectID, pullRequestID string) (*model.ProjectV2Item, error)
+}
+
 type services struct {
 	*userService
 	*repoService
 	*issueService
 	*pullRequestService
+	*projectService
 }
 
 func New(exec boil.ContextExecutor) Services {
@@ -50,5 +67,6 @@ func New(exec boil.ContextExecutor) Services {
 		repoService:        &repoService{exec: exec},
 		issueService:       &issueService{exec: exec},
 		pullRequestService: &pullRequestService{exec: exec},
+		projectService:     &projectService{exec: exec},
 	}
 }

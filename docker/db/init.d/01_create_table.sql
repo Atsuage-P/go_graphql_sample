@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS projects(
 	id varchar(255) PRIMARY KEY NOT NULL,
 	title TEXT NOT NULL,
 	url TEXT NOT NULL,
+	number INTEGER NOT NULL,
 	owner varchar(255) NOT NULL,
 	FOREIGN KEY (owner) REFERENCES users(id)
 );
@@ -74,8 +75,8 @@ INSERT INTO issues(id, url, title, closed, number, author, repository) VALUES
 	('ISSUE_7', 'http://example.com/repo1/issue/7', '', 0, 7, 'U_1', 'REPO_1')
 ;
 
-INSERT INTO projects(id, title, url, owner) VALUES
-	('PJ_1', 'My Project', 'http://example.com/project/1', 'U_1')
+INSERT INTO projects(id, title, url, number, owner) VALUES
+	('PJ_1', 'My Project', 'http://example.com/project/1', 1, 'U_1')
 ;
 
 INSERT INTO pullrequests(id, base_ref_name, closed, head_ref_name, url, number, repository) VALUES
