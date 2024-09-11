@@ -7,7 +7,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
 	"mygql/graph/model"
 	"mygql/internal"
 	"strings"
@@ -32,22 +31,44 @@ func (r *issueResolver) Author(ctx context.Context, obj *model.Issue) (*model.Us
 
 // Repository is the resolver for the repository field.
 func (r *issueResolver) Repository(ctx context.Context, obj *model.Issue) (*model.Repository, error) {
-	panic(fmt.Errorf("not implemented: Repository - repository"))
+	return r.Srv.GetRepoByID(ctx, obj.Repository.ID)
 }
 
 // ProjectItems is the resolver for the projectItems field.
 func (r *issueResolver) ProjectItems(ctx context.Context, obj *model.Issue, after *string, before *string, first *int, last *int) (*model.ProjectV2ItemConnection, error) {
-	panic(fmt.Errorf("not implemented: ProjectItems - projectItems"))
+	return r.Srv.ListProjectItemOwnedByIssue(ctx, obj.ID, after, before, first, last)
 }
 
 // AddProjectV2ItemByID is the resolver for the addProjectV2ItemById field.
 func (r *mutationResolver) AddProjectV2ItemByID(ctx context.Context, input model.AddProjectV2ItemByIDInput) (*model.AddProjectV2ItemByIDPayload, error) {
-	panic(fmt.Errorf("not implemented: AddProjectV2ItemByID - addProjectV2ItemById"))
+	nElems := strings.SplitN(input.ContentID, "_", 2)
+	nType, _ := nElems[0], nElems[1]
+
+	switch nType {
+	case "ISSUE":
+		item, err := r.Srv.AddIssueInProjectV2(ctx, input.ProjectID, input.ContentID)
+		if err != nil {
+			return nil, err
+		}
+		return &model.AddProjectV2ItemByIDPayload{
+			Item: item,
+		}, nil
+	case "PR":
+		item, err := r.Srv.AddPullRequestInProjectV2(ctx, input.ProjectID, input.ContentID)
+		if err != nil {
+			return nil, err
+		}
+		return &model.AddProjectV2ItemByIDPayload{
+			Item: item,
+		}, nil
+	default:
+		return nil, errors.New("invalid content id")
+	}
 }
 
 // Items is the resolver for the items field.
 func (r *projectV2Resolver) Items(ctx context.Context, obj *model.ProjectV2, after *string, before *string, first *int, last *int) (*model.ProjectV2ItemConnection, error) {
-	panic(fmt.Errorf("not implemented: Items - items"))
+	return r.Srv.ListProjectItemOwnedByProject(ctx, obj.ID, after, before, first, last)
 }
 
 // Owner is the resolver for the owner field.
@@ -57,7 +78,19 @@ func (r *projectV2Resolver) Owner(ctx context.Context, obj *model.ProjectV2) (*m
 
 // Content is the resolver for the content field.
 func (r *projectV2ItemResolver) Content(ctx context.Context, obj *model.ProjectV2Item) (model.ProjectV2ItemContent, error) {
-	panic(fmt.Errorf("not implemented: Content - content"))
+	item, err := r.Srv.GetProjectItemByID(ctx, obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	switch content := item.Content.(type) {
+	case *model.Issue:
+		return r.Srv.GetIssueByID(ctx, content.ID)
+	case *model.PullRequest:
+		return r.Srv.GetPullRequestByID(ctx, content.ID)
+	default:
+		return nil, errors.New("invalid ProjectV2 Item")
+	}
 }
 
 // Repository is the resolver for the repository field.
@@ -67,7 +100,7 @@ func (r *pullRequestResolver) Repository(ctx context.Context, obj *model.PullReq
 
 // ProjectItems is the resolver for the projectItems field.
 func (r *pullRequestResolver) ProjectItems(ctx context.Context, obj *model.PullRequest, after *string, before *string, first *int, last *int) (*model.ProjectV2ItemConnection, error) {
-	panic(fmt.Errorf("not implemented: ProjectItems - projectItems"))
+	return r.Srv.ListProjectItemOwnedByPullRequest(ctx, obj.ID, after, before, first, last)
 }
 
 // Repository is the resolver for the repository field.
@@ -96,10 +129,10 @@ func (r *queryResolver) Node(ctx context.Context, id string) (model.Node, error)
 		return r.Srv.GetRepoByID(ctx, id)
 	case "ISSUE":
 		return r.Srv.GetIssueByID(ctx, id)
-	// case "PJ":
-	// 	return r.Srv.GetProjectByID(ctx, id)
-	// case "PR":
-	// 	return r.Srv.GetPullRequestByID(ctx, id)
+	case "PJ":
+		return r.Srv.GetProjectByID(ctx, id)
+	case "PR":
+		return r.Srv.GetPullRequestByID(ctx, id)
 	default:
 		return nil, errors.New("invalid ID")
 	}
@@ -132,12 +165,12 @@ func (r *repositoryResolver) PullRequests(ctx context.Context, obj *model.Reposi
 
 // ProjectV2 is the resolver for the projectV2 field.
 func (r *userResolver) ProjectV2(ctx context.Context, obj *model.User, number int) (*model.ProjectV2, error) {
-	panic(fmt.Errorf("not implemented: ProjectV2 - projectV2"))
+	return r.Srv.GetProjectByOwnerAndNumber(ctx, obj.ID, number)
 }
 
 // ProjectV2s is the resolver for the projectV2s field.
 func (r *userResolver) ProjectV2s(ctx context.Context, obj *model.User, after *string, before *string, first *int, last *int) (*model.ProjectV2Connection, error) {
-	panic(fmt.Errorf("not implemented: ProjectV2s - projectV2s"))
+	return r.Srv.ListProjectByOwner(ctx, obj.ID, after, before, first, last)
 }
 
 // Issue returns internal.IssueResolver implementation.

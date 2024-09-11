@@ -13,6 +13,7 @@ type Services interface {
 	IssueService
 	PullRequestService
 	ProjectService
+	ProjectItemService
 }
 
 type UserService interface {
@@ -59,6 +60,7 @@ type services struct {
 	*issueService
 	*pullRequestService
 	*projectService
+	*projectItemService
 }
 
 func New(exec boil.ContextExecutor) Services {
@@ -68,5 +70,6 @@ func New(exec boil.ContextExecutor) Services {
 		issueService:       &issueService{exec: exec},
 		pullRequestService: &pullRequestService{exec: exec},
 		projectService:     &projectService{exec: exec},
+		projectItemService: &projectItemService{exec: exec},
 	}
 }
