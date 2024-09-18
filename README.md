@@ -23,3 +23,4 @@ go run ./server.go
 sqlboiler mysql
 ```
 - ページネーションの[before,after,first,last部分について](https://tekrog.com/graphql-relay-cursor)
+- `go test -update` によりゴールデンテストの期待結果を出力可

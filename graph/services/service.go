@@ -7,6 +7,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
+//go:generate mockgen -source=$GOFILE -package=$GOPACKAGE -destination=../../mock/$GOPACKAGE/service_mock.go
 type Services interface {
 	UserService
 	RepoService
